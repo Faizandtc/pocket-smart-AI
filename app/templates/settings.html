@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Settings & Preferences - PocketSmart AI{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-900 brand-font">Settings & Preferences</h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">Configure your personal currency format, profile, and Gemini AI key.</p>
+    </div>
+
+    {% if message %}
+    <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 shadow-xs">
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+        <span>{{ message }}</span>
+    </div>
+    {% endif %}
+
+    <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        <form action="/settings" method="POST" class="space-y-6">
+            
+            <!-- User Information -->
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 mb-1 flex items-center gap-2">
+                    <i data-lucide="user" class="w-4 h-4 text-emerald-600"></i> Profile Information
+                </h3>
+                <p class="text-xs text-slate-500 mb-4">Your name and default display currency.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Full Name</label>
+                        <input type="text" name="full_name" value="{{ user.full_name or '' }}" class="form-input-modern w-full text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Default Currency</label>
+                        <select name="currency_pref" class="form-input-modern w-full text-sm">
+                            <option value="$" {% if user.currency_pref == '$' %}selected{% endif %}>USD ($)</option>
+                            <option value="€" {% if user.currency_pref == '€' %}selected{% endif %}>EUR (€)</option>
+                            <option value="£" {% if user.currency_pref == '£' %}selected{% endif %}>GBP (£)</option>
+                            <option value="₹" {% if user.currency_pref == '₹' %}selected{% endif %}>INR (₹)</option>
+                            <option value="¥" {% if user.currency_pref == '¥' %}selected{% endif %}>JPY (¥)</option>
+                            <option value="C$" {% if user.currency_pref == 'C$' %}selected{% endif %}>CAD (C$)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gemini AI Key Configuration -->
+            <div class="pt-6 border-t border-slate-100">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4 text-indigo-600"></i> Gemini AI Integration Key
+                    </h3>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full {% if user.gemini_api_key %}bg-emerald-100 text-emerald-700 border border-emerald-300{% else %}bg-slate-100 text-slate-600{% endif %}">
+                        {{ 'Connected' if user.gemini_api_key else 'Using Smart Fallback' }}
+                    </span>
+                </div>
+                <p class="text-xs text-slate-500 mb-3 leading-relaxed">
+                    PocketSmart AI includes an intelligent domain-expert generation engine by default. To connect directly to your live Google Gemini 2.5 Flash / 1.5 Flash multimodal models, paste your API key below.
+                </p>
+
+                <div class="relative">
+                    <input type="password" id="gemini_key_input" name="gemini_api_key" value="{{ user.gemini_api_key or '' }}"
+                        placeholder="AIzaSy..."
+                        class="form-input-modern w-full pr-10 text-sm font-mono">
+                    <button type="button" id="toggle-key-visibility" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                        <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
+                    </button>
+                </div>
+                <span class="text-[11px] text-slate-400 mt-1 block">Your API key is securely saved in your local encrypted SQLite instance.</span>
+            </div>
+
+            <!-- Account Details Readonly -->
+            <div class="pt-6 border-t border-slate-100">
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <span class="text-slate-400 block uppercase font-semibold">Account Email</span>
+                        <span class="font-bold text-slate-800">{{ user.email }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block uppercase font-semibold">Username</span>
+                        <span class="font-bold text-slate-800">@{{ user.username }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+                <button type="submit" class="btn-primary py-2.5 px-6 text-sm shadow-sm">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const toggleBtn = document.getElementById('toggle-key-visibility');
+    const keyInput = document.getElementById('gemini_key_input');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    if (toggleBtn && keyInput) {
+        toggleBtn.addEventListener('click', () => {
+            const isPassword = keyInput.type === 'password';
+            keyInput.type = isPassword ? 'text' : 'password';
+            eyeIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+            lucide.createIcons();
+        });
+    }
+</script>
+{% endblock %}

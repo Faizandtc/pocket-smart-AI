@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}PocketSmart AI - Budget-Based Lifestyle & Event Planning{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100">
+    <!-- Background Glow Elements -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none overflow-hidden opacity-30">
+        <div class="absolute -top-24 -left-20 w-96 h-96 bg-emerald-300 rounded-full blur-3xl"></div>
+        <div class="absolute top-10 right-10 w-96 h-96 bg-indigo-300 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
+        <div class="text-center max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold mb-6 shadow-xs">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Next-Gen Financial Lifestyle Intelligence</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15] brand-font mb-6">
+                Spend Smarter. Live Elevated. <br/>
+                <span class="gradient-text">Budget-Driven AI Design.</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-600 leading-relaxed mb-10 font-normal">
+                PocketSmart AI eliminates guesswork. Get precise, personalized, and categorized budget allocations for <strong class="text-slate-900 font-semibold">Home Interiors</strong>, <strong class="text-slate-900 font-semibold">Memorable Parties</strong>, and <strong class="text-slate-900 font-semibold">Curated Jewelry</strong> with multimodal outfit-photo styling.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/interior" class="btn-primary w-full sm:w-auto text-base py-3.5 px-7 shadow-md">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i> Start Interior Plan
+                </a>
+                <a href="/party" class="btn-secondary w-full sm:w-auto text-base py-3.5 px-7">
+                    <i data-lucide="party-popper" class="w-5 h-5 text-indigo-500"></i> Plan an Event
+                </a>
+                <a href="/jewelry" class="btn-secondary w-full sm:w-auto text-base py-3.5 px-7">
+                    <i data-lucide="gem" class="w-5 h-5 text-amber-500"></i> Style Outfit Jewelry
+                </a>
+            </div>
+
+            <!-- Demo Account Quick Note -->
+            {% if not user %}
+            <div class="mt-6 flex items-center justify-center gap-2 text-xs text-slate-500">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                <span>Instant Demo Available: Log in with <code class="bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded">demo@pocketsmart.ai</code> / <code class="bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded">password123</code></span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Interactive Budget Simulator Preview Box -->
+        <div class="mt-16 max-w-4xl mx-auto glass-card rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5 text-emerald-600"></i>
+                        Interactive Budget Allocation Simulator
+                    </h2>
+                    <p class="text-xs text-slate-500">Slide to test how PocketSmart's algorithm allocates capital across categories</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-slate-400 uppercase">Target Budget:</span>
+                    <span id="preview-budget-val" class="text-2xl font-black text-emerald-600 font-mono">$3,500</span>
+                </div>
+            </div>
+
+            <!-- Slider -->
+            <div class="py-6">
+                <input id="preview-budget-slider" type="range" min="500" max="15000" step="250" value="3500" 
+                    class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                <div class="flex justify-between text-xs text-slate-400 mt-2">
+                    <span>$500 (Intimate)</span>
+                    <span>$3,500 (Balanced)</span>
+                    <span>$7,500 (Elevated)</span>
+                    <span>$15,000+ (Luxe)</span>
+                </div>
+            </div>
+
+            <!-- Dynamic 3-Pillar Allocation Preview Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Interior Allocation Preview -->
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg"><i data-lucide="sofa" class="w-4 h-4"></i></span>
+                            <span class="font-bold text-sm text-slate-800">Interior Plan</span>
+                        </div>
+                        <span id="preview-interior-total" class="font-semibold text-xs text-emerald-700 font-mono">$3,500</span>
+                    </div>
+                    <ul class="text-xs space-y-1.5 text-slate-600 pt-2 border-t border-slate-200">
+                        <li class="flex justify-between"><span>Core Furniture (46%):</span> <strong id="alloc-int-furn" class="font-mono text-slate-800">$1,610</strong></li>
+                        <li class="flex justify-between"><span>Lighting (16%):</span> <strong id="alloc-int-light" class="font-mono text-slate-800">$560</strong></li>
+                        <li class="flex justify-between"><span>Textiles & Rug (16%):</span> <strong id="alloc-int-rug" class="font-mono text-slate-800">$560</strong></li>
+                        <li class="flex justify-between"><span>Art & Greenery (14%):</span> <strong id="alloc-int-art" class="font-mono text-slate-800">$490</strong></li>
+                        <li class="flex justify-between text-emerald-600"><span>Reserve Buffer (8%):</span> <strong id="alloc-int-buf" class="font-mono">$280</strong></li>
+                    </ul>
+                    <a href="/interior" class="mt-4 block text-center text-xs font-semibold text-emerald-600 hover:text-emerald-700 py-1.5 bg-white border border-emerald-200 rounded-lg hover:bg-emerald-50 transition-colors">
+                        Launch Room Planner &rarr;
+                    </a>
+                </div>
+
+                <!-- Party Allocation Preview -->
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg"><i data-lucide="party-popper" class="w-4 h-4"></i></span>
+                            <span class="font-bold text-sm text-slate-800">Party (25 Guests)</span>
+                        </div>
+                        <span id="preview-party-perguest" class="font-semibold text-xs text-indigo-700 font-mono">$140/guest</span>
+                    </div>
+                    <ul class="text-xs space-y-1.5 text-slate-600 pt-2 border-t border-slate-200">
+                        <li class="flex justify-between"><span>Food & Bites (38%):</span> <strong id="alloc-pty-food" class="font-mono text-slate-800">$1,330</strong></li>
+                        <li class="flex justify-between"><span>Signature Bar (25%):</span> <strong id="alloc-pty-bar" class="font-mono text-slate-800">$875</strong></li>
+                        <li class="flex justify-between"><span>Themed Decor (17%):</span> <strong id="alloc-pty-dec" class="font-mono text-slate-800">$595</strong></li>
+                        <li class="flex justify-between"><span>Music & Photo (12%):</span> <strong id="alloc-pty-ent" class="font-mono text-slate-800">$420</strong></li>
+                        <li class="flex justify-between text-indigo-600"><span>Contingency (8%):</span> <strong id="alloc-pty-buf" class="font-mono">$280</strong></li>
+                    </ul>
+                    <a href="/party" class="mt-4 block text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 py-1.5 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors">
+                        Launch Event Producer &rarr;
+                    </a>
+                </div>
+
+                <!-- Jewelry Allocation Preview -->
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="p-1.5 bg-amber-100 text-amber-700 rounded-lg"><i data-lucide="gem" class="w-4 h-4"></i></span>
+                            <span class="font-bold text-sm text-slate-800">Jewelry Curation</span>
+                        </div>
+                        <span id="preview-jewel-total" class="font-semibold text-xs text-amber-700 font-mono">$3,500</span>
+                    </div>
+                    <ul class="text-xs space-y-1.5 text-slate-600 pt-2 border-t border-slate-200">
+                        <li class="flex justify-between"><span>Focal Piece (44%):</span> <strong id="alloc-jwl-foc" class="font-mono text-slate-800">$1,540</strong></li>
+                        <li class="flex justify-between"><span>Face Framing (26%):</span> <strong id="alloc-jwl-ear" class="font-mono text-slate-800">$910</strong></li>
+                        <li class="flex justify-between"><span>Wrist Bangle (18%):</span> <strong id="alloc-jwl-wri" class="font-mono text-slate-800">$630</strong></li>
+                        <li class="flex justify-between"><span>Accent Ring (12%):</span> <strong id="alloc-jwl-rng" class="font-mono text-slate-800">$420</strong></li>
+                        <li class="flex justify-between text-amber-600"><span>Outfit Vision:</span> <strong class="font-mono">Multimodal AI</strong></li>
+                    </ul>
+                    <a href="/jewelry" class="mt-4 block text-center text-xs font-semibold text-amber-600 hover:text-amber-700 py-1.5 bg-white border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors">
+                        Launch Jewelry Stylist &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Three Main Pillars Showcase -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-200">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h2 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2">Three Specialized Engines</h2>
+            <h3 class="text-3xl font-extrabold text-slate-900 brand-font">One Unified Financial Lifestyle System</h3>
+            <p class="text-slate-600 text-sm mt-3">Whether redecorating a sanctuary, hosting friends, or styling for a red carpet event, PocketSmart delivers tailored master plans within your financial parameters.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Pillar 1: Interior -->
+            <div class="glass-card glass-card-hover rounded-2xl p-7 flex flex-col justify-between border-t-4 border-t-emerald-500">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
+                        <i data-lucide="sofa" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">Home Interior Planning</h4>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                        Design rooms that look magazine-worthy without exceeding your wallet. Customized for Living Rooms, Bedrooms, Studios, and Offices.
+                    </p>
+                    <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Harmonic 4-tone color palettes with hex codes</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> Furniture, lighting, and textile cost allocations</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> DIY upcycling tips and spatial flow layout advice</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i> 3-Tier comparison: Thrifty vs Balanced vs Luxe</li>
+                    </ul>
+                </div>
+                <a href="/interior" class="btn-primary w-full text-sm">
+                    Open Interior Studio &rarr;
+                </a>
+            </div>
+
+            <!-- Pillar 2: Party -->
+            <div class="glass-card glass-card-hover rounded-2xl p-7 flex flex-col justify-between border-t-4 border-t-indigo-500">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6">
+                        <i data-lucide="party-popper" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">Party & Event Planning</h4>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                        Throw unmissable gatherings with effortless hospitality. PocketSmart automatically calculates cost-per-guest and coordinates logistics.
+                    </p>
+                    <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indigo-500"></i> Grazing table and batch cocktail budgeting</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indigo-500"></i> Minute-by-minute party host choreography schedule</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indigo-500"></i> Atmospheric lighting and music playlist curation</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indigo-500"></i> High-impact DIY balloon and photo booth hacks</li>
+                    </ul>
+                </div>
+                <a href="/party" class="btn-primary w-full text-sm !bg-indigo-600 hover:!bg-indigo-700 shadow-indigo-200">
+                    Open Party Studio &rarr;
+                </a>
+            </div>
+
+            <!-- Pillar 3: Jewelry -->
+            <div class="glass-card glass-card-hover rounded-2xl p-7 flex flex-col justify-between border-t-4 border-t-amber-500">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-6">
+                        <i data-lucide="gem" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">Jewelry & Outfit Vision</h4>
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                        Never overpay or mismatch jewelry again. Upload a photo of your dress or outfit, and our multimodal AI inspects necklines and shades.
+                    </p>
+                    <ul class="space-y-2.5 text-xs text-slate-700 mb-6 font-medium">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-500"></i> Multimodal outfit photo visual analysis</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-500"></i> Neckline harmony rules (V-Neck, Off-shoulder...)</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-500"></i> 4-piece coordinated set with price breakdowns</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-500"></i> Gold vermeil vs solid gold vs moissanite guides</li>
+                    </ul>
+                </div>
+                <a href="/jewelry" class="btn-primary w-full text-sm !bg-amber-600 hover:!bg-amber-700 shadow-amber-200">
+                    Open Jewelry Studio &rarr;
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why 3 Tiers Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-slate-900 text-white rounded-3xl my-10">
+        <div class="max-w-3xl mx-auto text-center mb-12">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Financial Methodology</span>
+            <h3 class="text-3xl sm:text-4xl font-extrabold brand-font mt-2">The PocketSmart 3-Tier Spectrum</h3>
+            <p class="text-slate-400 text-sm mt-3">Every recommendation delivers three parallel scenarios so you always retain full control of your spend.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6">
+                <div class="text-emerald-400 font-bold text-lg mb-1">1. Smart Thrifty (~75% Budget)</div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Maximizes savings through clever substitution, high-grade DIY upgrades (custom hardware, printable gallery art, batch punch bowls, and heavy gold vermeil).
+                </p>
+            </div>
+            <div class="bg-emerald-950/60 border border-emerald-600/50 rounded-2xl p-6 relative">
+                <div class="absolute -top-3 right-4 bg-emerald-500 text-slate-900 font-bold text-[10px] px-2 py-0.5 rounded-full uppercase">
+                    Sweet Spot
+                </div>
+                <div class="text-emerald-300 font-bold text-lg mb-1">2. Balanced Master (100% Target)</div>
+                <p class="text-xs text-slate-200 leading-relaxed">
+                    The optimal high-low blend. Solid performance focal pieces paired with cost-effective accents, full hosted catering, and certified moissanite sparkle.
+                </p>
+            </div>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6">
+                <div class="text-indigo-400 font-bold text-lg mb-1">3. Luxe Bespoke (~130% Budget)</div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Premium upgrade path highlighting where extra investment yields outsized longevity: solid hardwood, hired event mixologist, and solid 14k/18k gold heirloom jewelry.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom CTA Banner -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div class="max-w-2xl mx-auto">
+            <h3 class="text-3xl font-extrabold text-slate-900 brand-font mb-4">Ready to optimize your next project?</h3>
+            <p class="text-slate-600 text-sm mb-8">Join thousands of smart planners creating beautiful spaces, parties, and looks without financial regret.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/register" class="btn-primary text-base py-3.5 px-8">Create Free Account</a>
+                <a href="/login" class="btn-secondary text-base py-3.5 px-8">Login to Dashboard</a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Live budget preview slider calculation
+    const slider = document.getElementById('preview-budget-slider');
+    const budgetVal = document.getElementById('preview-budget-val');
+    
+    const intTotal = document.getElementById('preview-interior-total');
+    const allocIntFurn = document.getElementById('alloc-int-furn');
+    const allocIntLight = document.getElementById('alloc-int-light');
+    const allocIntRug = document.getElementById('alloc-int-rug');
+    const allocIntArt = document.getElementById('alloc-int-art');
+    const allocIntBuf = document.getElementById('alloc-int-buf');
+
+    const partyPerGuest = document.getElementById('preview-party-perguest');
+    const allocPtyFood = document.getElementById('alloc-pty-food');
+    const allocPtyBar = document.getElementById('alloc-pty-bar');
+    const allocPtyDec = document.getElementById('alloc-pty-dec');
+    const allocPtyEnt = document.getElementById('alloc-pty-ent');
+    const allocPtyBuf = document.getElementById('alloc-pty-buf');
+
+    const jewelTotal = document.getElementById('preview-jewel-total');
+    const allocJwlFoc = document.getElementById('alloc-jwl-foc');
+    const allocJwlEar = document.getElementById('alloc-jwl-ear');
+    const allocJwlWri = document.getElementById('alloc-jwl-wri');
+    const allocJwlRng = document.getElementById('alloc-jwl-rng');
+
+    function updatePreview(val) {
+        const num = parseFloat(val);
+        budgetVal.textContent = `$${num.toLocaleString()}`;
+        
+        // Interior
+        intTotal.textContent = `$${num.toLocaleString()}`;
+        allocIntFurn.textContent = `$${Math.round(num * 0.46).toLocaleString()}`;
+        allocIntLight.textContent = `$${Math.round(num * 0.16).toLocaleString()}`;
+        allocIntRug.textContent = `$${Math.round(num * 0.16).toLocaleString()}`;
+        allocIntArt.textContent = `$${Math.round(num * 0.14).toLocaleString()}`;
+        allocIntBuf.textContent = `$${Math.round(num * 0.08).toLocaleString()}`;
+
+        // Party (25 guests)
+        partyPerGuest.textContent = `$${Math.round(num / 25)}/guest`;
+        allocPtyFood.textContent = `$${Math.round(num * 0.38).toLocaleString()}`;
+        allocPtyBar.textContent = `$${Math.round(num * 0.25).toLocaleString()}`;
+        allocPtyDec.textContent = `$${Math.round(num * 0.17).toLocaleString()}`;
+        allocPtyEnt.textContent = `$${Math.round(num * 0.12).toLocaleString()}`;
+        allocPtyBuf.textContent = `$${Math.round(num * 0.08).toLocaleString()}`;
+
+        // Jewelry
+        jewelTotal.textContent = `$${num.toLocaleString()}`;
+        allocJwlFoc.textContent = `$${Math.round(num * 0.44).toLocaleString()}`;
+        allocJwlEar.textContent = `$${Math.round(num * 0.26).toLocaleString()}`;
+        allocJwlWri.textContent = `$${Math.round(num * 0.18).toLocaleString()}`;
+        allocJwlRng.textContent = `$${Math.round(num * 0.12).toLocaleString()}`;
+    }
+
+    if (slider) {
+        slider.addEventListener('input', (e) => updatePreview(e.target.value));
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PocketSmart AI - Budget-Based Lifestyle & Event Planning{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857'
+                        },
+                        indigoBrand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="min-h-full flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo & Title -->
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="flex items-center space-x-2.5 group">
+                        <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform">
+                            <img src="/static/images/logo.svg" alt="PocketSmart AI Logo" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <span class="text-xl font-bold brand-font text-slate-900 tracking-tight">Pocket<span class="text-emerald-600">Smart</span></span>
+                            <span class="text-xs font-semibold px-2 py-0.5 ml-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">AI</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <a href="/interior" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-emerald-600 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i data-lucide="sofa" class="w-4 h-4 text-emerald-500"></i> Interior
+                    </a>
+                    <a href="/party" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i data-lucide="party-popper" class="w-4 h-4 text-indigo-500"></i> Party
+                    </a>
+                    <a href="/jewelry" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-amber-600 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i data-lucide="gem" class="w-4 h-4 text-amber-500"></i> Jewelry & Outfits
+                    </a>
+                    {% if user %}
+                    <a href="/dashboard" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-500"></i> Dashboard
+                    </a>
+                    <a href="/history" class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i data-lucide="history" class="w-4 h-4 text-slate-500"></i> History
+                    </a>
+                    {% endif %}
+                </nav>
+
+                <!-- User Profile / Auth State -->
+                <div class="hidden md:flex items-center space-x-3">
+                    {% if user %}
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors text-slate-700 font-medium text-sm">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+                                {{ user.username[0] if user.username else 'U' }}
+                            </div>
+                            <span>{{ user.full_name or user.username }}</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-2 hidden group-hover:block transition-all">
+                            <div class="px-4 py-1.5 border-b border-slate-100 text-xs text-slate-400">
+                                Logged in as <span class="font-semibold text-slate-700 block truncate">{{ user.email }}</span>
+                            </div>
+                            <a href="/dashboard" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400"></i> Dashboard
+                            </a>
+                            <a href="/history" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                                <i data-lucide="bookmark" class="w-4 h-4 text-slate-400"></i> Saved Plans
+                            </a>
+                            <a href="/settings" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                                <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i> Settings & API Key
+                            </a>
+                            <div class="border-t border-slate-100 my-1"></div>
+                            <a href="/logout" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+                                <i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i> Sign Out
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="/login" class="text-sm font-semibold text-slate-700 hover:text-emerald-600 px-3 py-2 rounded-lg transition-colors">
+                        Sign In
+                    </a>
+                    <a href="/register" class="btn-primary text-sm py-2 px-4 shadow-sm">
+                        Get Started Free
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex md:hidden items-center">
+                    <button id="mobile-menu-btn" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none" aria-label="Toggle menu">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-4 space-y-2">
+            <a href="/interior" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i data-lucide="sofa" class="w-5 h-5 text-emerald-500"></i> Home Interior
+            </a>
+            <a href="/party" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i data-lucide="party-popper" class="w-5 h-5 text-indigo-500"></i> Party Planning
+            </a>
+            <a href="/jewelry" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i data-lucide="gem" class="w-5 h-5 text-amber-500"></i> Jewelry & Outfits
+            </a>
+            {% if user %}
+            <a href="/dashboard" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 text-slate-500"></i> Dashboard
+            </a>
+            <a href="/history" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i data-lucide="history" class="w-5 h-5 text-slate-500"></i> History
+            </a>
+            <a href="/settings" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <i data-lucide="settings" class="w-5 h-5 text-slate-500"></i> Settings
+            </a>
+            <a href="/logout" class="block px-3 py-2 rounded-lg text-base font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+                <i data-lucide="log-out" class="w-5 h-5 text-rose-500"></i> Sign Out
+            </a>
+            {% else %}
+            <div class="pt-2 border-t border-slate-100 flex flex-col space-y-2">
+                <a href="/login" class="w-full text-center py-2.5 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700">Sign In</a>
+                <a href="/register" class="w-full text-center py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold">Get Started Free</a>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-20 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center space-x-2.5 mb-3">
+                        <div class="w-8 h-8 rounded-lg overflow-hidden">
+                            <img src="/static/images/logo.svg" alt="PocketSmart AI" class="w-full h-full object-cover">
+                        </div>
+                        <span class="text-xl font-bold brand-font text-white">Pocket<span class="text-emerald-400">Smart</span></span>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed mb-4">
+                        Intelligent, budget-first lifestyle recommendation engine powered by Gemini AI. Transform your spaces, events, and personal style within exact budgets.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs text-emerald-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 w-fit">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i> Powered by Gemini AI
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">AI Planners</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="/interior" class="hover:text-emerald-400 transition-colors">Home Interior Planner</a></li>
+                        <li><a href="/party" class="hover:text-emerald-400 transition-colors">Party & Event Producer</a></li>
+                        <li><a href="/jewelry" class="hover:text-emerald-400 transition-colors">Jewelry & Outfit Vision</a></li>
+                        <li><a href="/dashboard" class="hover:text-emerald-400 transition-colors">User Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Smart Features</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><span class="text-slate-400">3-Tier Allocation (Thrifty, Balanced, Luxe)</span></li>
+                        <li><span class="text-slate-400">Multimodal Outfit Photo Analysis</span></li>
+                        <li><span class="text-slate-400">Interactive Chart.js Visual Donuts</span></li>
+                        <li><span class="text-slate-400">Instant PDF & Print Export</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Security & Account</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="/login" class="hover:text-emerald-400 transition-colors">Client Login</a></li>
+                        <li><a href="/register" class="hover:text-emerald-400 transition-colors">Create Free Account</a></li>
+                        <li><a href="/settings" class="hover:text-emerald-400 transition-colors">API Settings & Keys</a></li>
+                        <li><span class="text-slate-500 text-xs">JWT Signed & Bcrypt Encrypted</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+                <p>&copy; 2026 PocketSmart AI. All rights reserved. Designed for intelligent lifestyle budgeting.</p>
+                <p class="mt-2 sm:mt-0 flex items-center gap-1">Built with FastAPI, Gemini AI, SQLite & Jinja2</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Global Scripts -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Global Toast Notification Helper
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium transition-all transform duration-300 translate-y-2 opacity-0 ${
+                type === 'success' 
+                    ? 'bg-emerald-900/90 text-white border-emerald-700' 
+                    : type === 'error'
+                    ? 'bg-rose-900/90 text-white border-rose-700'
+                    : 'bg-slate-900/90 text-white border-slate-700'
+            }`;
+            
+            const iconName = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info';
+            toast.innerHTML = `
+                <i data-lucide="${iconName}" class="w-5 h-5 flex-shrink-0"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons({ root: toast });
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Copy to clipboard helper
+        function copyText(text, successMsg = 'Copied to clipboard!') {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(successMsg, 'success');
+            }).catch(() => {
+                showToast('Failed to copy text', 'error');
+            });
+        }
+    </script>
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

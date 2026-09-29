@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}Party & Event Planning - PocketSmart AI{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Header -->
+    <div class="max-w-3xl mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-3 border border-indigo-200">
+            <i data-lucide="party-popper" class="w-3.5 h-3.5"></i>
+            <span>Event Production & Hospitality Budget Engine</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 brand-font">
+            Party & Event Planning
+        </h1>
+        <p class="text-sm text-slate-600 mt-2">
+            Host legendary gatherings without financial strain. PocketSmart calculates per-guest metrics, batch cocktail menus, grazing spreads, timeline choreography, and three hosting tiers.
+        </p>
+    </div>
+
+    <!-- Main Grid: Form (Left) & Results (Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Planner Input Form (Left 5 Cols) -->
+        <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm sticky top-24">
+            <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600"></i> Event Parameters
+            </h2>
+
+            <form id="party-form" class="space-y-4">
+                <!-- Event Type -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Event Type</label>
+                    <select id="event_type" name="event_type" class="form-input-modern w-full text-sm">
+                        <option value="Birthday Party" selected>Birthday Party</option>
+                        <option value="Cocktail Mixer / Soirée">Cocktail Mixer / Soirée</option>
+                        <option value="Wedding Reception / Dinner">Wedding Reception / Dinner</option>
+                        <option value="House Party / Game Night">House Party / Game Night</option>
+                        <option value="Networking / Tech Meetup">Networking / Tech Meetup</option>
+                        <option value="Baby Shower / Anniversary">Baby Shower / Anniversary</option>
+                    </select>
+                </div>
+
+                <!-- Theme -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Theme & Atmosphere</label>
+                    <select id="theme" name="theme" class="form-input-modern w-full text-sm">
+                        <option value="Neon Cyberpunk" selected>Neon Cyberpunk (Vibrant Glow)</option>
+                        <option value="Rustic Garden Chic">Rustic Garden Chic (Warm Botanical)</option>
+                        <option value="Gatsby Glamour">Gatsby Glamour (Gold & Black Velvet)</option>
+                        <option value="Tropical Sunset Lounge">Tropical Sunset Lounge (Pastel Warmth)</option>
+                        <option value="Casual Modern Minimalist">Casual Modern Minimalist (Effortless Elegance)</option>
+                        <option value="Retro 80s Disco">Retro 80s Disco (Fun & Energetic)</option>
+                    </select>
+                </div>
+
+                <!-- Guest Count Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Guest Count</label>
+                        <span id="guest-count-val" class="text-xs font-bold text-indigo-600 font-mono">25 Guests</span>
+                    </div>
+                    <input type="range" id="guest_count" name="guest_count" min="5" max="150" step="5" value="25"
+                        class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                        <span>5 Guests (Intimate)</span>
+                        <span>25 Guests</span>
+                        <span>75 Guests</span>
+                        <span>150 Guests (Large)</span>
+                    </div>
+                </div>
+
+                <!-- Budget & Per-Guest Calculation Banner -->
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Target Budget</label>
+                        <span class="text-xs font-semibold text-indigo-600 font-mono" id="budget-display">{{ currency }}2,000</span>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold text-sm">{{ currency }}</span>
+                        <input type="number" id="budget" name="budget" min="150" step="50" value="2000" required class="form-input-modern w-full pl-8 text-sm font-mono font-bold">
+                    </div>
+                    
+                    <!-- Per guest indicator -->
+                    <div class="mt-2 p-2 rounded-xl bg-indigo-50/70 border border-indigo-100 flex items-center justify-between text-xs text-indigo-900">
+                        <span>Allocated Cost Per Guest:</span>
+                        <strong id="per-guest-indicator" class="font-mono text-indigo-700 font-bold">{{ currency }}80.00 / guest</strong>
+                    </div>
+
+                    <!-- Preset Buttons -->
+                    <div class="flex gap-2 mt-2">
+                        <button type="button" class="preset-btn px-2.5 py-1 text-[11px] rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 transition-colors font-semibold" data-amount="800">{{ currency }}800</button>
+                        <button type="button" class="preset-btn px-2.5 py-1 text-[11px] rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 transition-colors font-semibold" data-amount="2000">{{ currency }}2,000</button>
+                        <button type="button" class="preset-btn px-2.5 py-1 text-[11px] rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 transition-colors font-semibold" data-amount="4500">{{ currency }}4,500</button>
+                        <button type="button" class="preset-btn px-2.5 py-1 text-[11px] rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 transition-colors font-semibold" data-amount="10000">{{ currency }}10,000</button>
+                    </div>
+                </div>
+
+                <!-- Venue Type -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Venue</label>
+                    <select id="venue_type" name="venue_type" class="form-input-modern w-full text-sm">
+                        <option value="Indoor Apartment / Home" selected>Indoor Apartment / Home</option>
+                        <option value="Rented Event Loft / Studio">Rented Event Loft / Studio</option>
+                        <option value="Outdoor Backyard / Garden">Outdoor Backyard / Garden</option>
+                        <option value="Rooftop / Terrace">Rooftop / Terrace</option>
+                        <option value="Community Clubhouse">Community Clubhouse</option>
+                    </select>
+                </div>
+
+                <!-- Special Notes -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Special Dietary / Music Notes</label>
+                    <textarea id="special_notes" name="special_notes" rows="2" placeholder="e.g. Vegetarian-friendly, signature gin cocktails, Spotify lo-fi to dance tempo" class="form-input-modern w-full text-xs"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="generate-btn" class="btn-primary w-full py-3.5 text-sm shadow-md mt-2 !bg-indigo-600 hover:!bg-indigo-700">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Generate Event Production Plan
+                </button>
+
+                {% if not user %}
+                <p class="text-[11px] text-center text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-2">
+                    <i data-lucide="info" class="w-3.5 h-3.5 inline mr-1"></i> You will be prompted to sign in to save your plan to your account.
+                </p>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Recommendation Output View (Right 7 Cols) -->
+        <div class="lg:col-span-7 space-y-6" id="results-container">
+            <!-- Initial Placeholder -->
+            <div id="placeholder-box" class="glass-card rounded-3xl p-12 text-center border border-slate-200">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="party-popper" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 brand-font mb-2">Produce Your Dream Event</h3>
+                <p class="text-sm text-slate-500 max-w-md mx-auto mb-6">
+                    Configure your guest count and budget on the left. PocketSmart will formulate a comprehensive catering breakdown, cocktail batch ratios, run-of-show timeline, and 3 hosting tiers.
+                </p>
+                <div class="inline-flex items-center gap-2 text-xs text-slate-400 bg-slate-100 px-3.5 py-1.5 rounded-full">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-500"></i> Smart Event Budget Engine
+                </div>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div id="loading-box" class="hidden glass-card rounded-3xl p-12 text-center border border-slate-200">
+                <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full mx-auto mb-4 pulse-spinner"></div>
+                <h3 class="text-lg font-bold text-slate-900 brand-font mb-1">Choreographing Your Party...</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto">Calculating food & beverage volumes, playlist energy curves, and decor setups.</p>
+            </div>
+
+            <!-- Rendered Output (Hidden by default) -->
+            <div id="plan-output" class="hidden space-y-6">
+                <!-- Header Card -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full mb-2">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Event Master Plan
+                            </div>
+                            <h2 id="plan-title" class="text-2xl font-black text-slate-900 brand-font"></h2>
+                            <p id="plan-summary" class="text-xs text-slate-600 mt-2 leading-relaxed"></p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="text-xs font-semibold text-slate-400 uppercase">Cost Per Guest</span>
+                            <div id="plan-per-guest" class="text-2xl font-black text-indigo-600 font-mono"></div>
+                            <span id="plan-total-budget" class="text-xs text-slate-500 block font-mono"></span>
+                        </div>
+                    </div>
+
+                    <!-- Music & Lighting Vibe -->
+                    <div class="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+                            <span class="text-xs font-bold text-indigo-900 flex items-center gap-1.5 mb-1">
+                                <i data-lucide="music" class="w-3.5 h-3.5 text-indigo-600"></i> Playlist & Audio Energy
+                            </span>
+                            <p id="vibe-genres" class="text-xs text-indigo-800 font-medium"></p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-100">
+                            <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+                                <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-600"></i> Lighting & Ambiance
+                            </span>
+                            <p id="vibe-lighting" class="text-xs text-amber-800 font-medium"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Visual Chart Card -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-900 mb-1 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+                        Event Budget Allocation
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-6">Distribution across Catering, Bar, Decor, and Entertainment</p>
+                    <div class="relative h-64 w-full">
+                        <canvas id="partyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3-Tier Comparison Tabs -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i>
+                            3-Tier Hosting Comparison
+                        </h3>
+                        <span class="text-xs text-slate-400">Click a tier to inspect</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-xl mb-4 text-xs font-semibold">
+                        <button type="button" id="tier-btn-thrifty" class="tier-tab-btn py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center">
+                            Casual Host
+                        </button>
+                        <button type="button" id="tier-btn-balanced" class="tier-tab-btn py-2 rounded-lg bg-white text-indigo-700 shadow-xs transition-all text-center">
+                            Signature Host
+                        </button>
+                        <button type="button" id="tier-btn-luxe" class="tier-tab-btn py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center">
+                            VIP Soirée
+                        </button>
+                    </div>
+
+                    <div id="tier-content-box" class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="tier-title" class="font-bold text-slate-900 text-sm"></span>
+                            <span id="tier-cost" class="font-bold text-indigo-700 font-mono text-sm"></span>
+                        </div>
+                        <p id="tier-strategy" class="text-slate-600 mb-3"></p>
+                        <ul id="tier-choices" class="space-y-1 text-slate-700 font-medium"></ul>
+                    </div>
+                </div>
+
+                <!-- Minute-by-Minute Run of Show Timeline -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-indigo-600"></i>
+                        Minute-by-Minute Host Choreography Timeline
+                    </h3>
+                    <div id="timeline-container" class="space-y-3"></div>
+                </div>
+
+                <!-- Itemized Cost Table -->
+                <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="receipt" class="w-4 h-4 text-indigo-600"></i>
+                        Itemized Production Budget Breakdown
+                    </h3>
+                    <div id="breakdown-tables-container" class="space-y-6"></div>
+                </div>
+
+                <!-- Cost Saving Hacks -->
+                <div class="glass-card rounded-2xl p-5 border border-slate-200">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i> Event Cost-Preservation Hacks
+                    </h4>
+                    <ul id="hacks-list" class="space-y-2 text-xs text-slate-600"></ul>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-4 no-print">
+                    <div class="text-xs text-slate-400">
+                        <i data-lucide="check" class="w-3.5 h-3.5 inline text-indigo-500"></i> Plan saved to your event history
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="copy-summary-btn" class="btn-secondary text-xs py-2 px-3">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Summary
+                        </button>
+                        <button type="button" onclick="window.print()" class="btn-secondary text-xs py-2 px-3">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print / PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/party.js"></script>
+{% endblock %}

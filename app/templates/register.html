@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account - PocketSmart AI{% endblock %}
+
+{% block content %}
+<div class="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full glass-card rounded-3xl p-8 sm:p-10 shadow-xl border border-slate-200">
+        <div class="text-center mb-8">
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 overflow-hidden shadow-sm">
+                <img src="/static/images/logo.svg" alt="PocketSmart AI" class="w-full h-full object-cover">
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 brand-font">Join PocketSmart AI</h2>
+            <p class="text-xs text-slate-500 mt-1">Unlock AI budget recommendations for spaces, events, and styling</p>
+        </div>
+
+        {% if error %}
+        <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form action="/register" method="POST" class="space-y-4">
+            <div>
+                <label for="username" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" id="username" name="username" required value="{{ username or '' }}"
+                        placeholder="designpro"
+                        class="form-input-modern w-full pl-10 text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label for="full_name" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Full Name</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                        <i data-lucide="badge-check" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" id="full_name" name="full_name" value="{{ full_name or '' }}"
+                        placeholder="Alex Morgan"
+                        class="form-input-modern w-full pl-10 text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label for="email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                    </span>
+                    <input type="email" id="email" name="email" required value="{{ email or '' }}"
+                        placeholder="alex@example.com"
+                        class="form-input-modern w-full pl-10 text-sm">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label for="currency_pref" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Currency</label>
+                    <select id="currency_pref" name="currency_pref" class="form-input-modern w-full text-sm">
+                        <option value="$" selected>USD ($)</option>
+                        <option value="€">EUR (€)</option>
+                        <option value="£">GBP (£)</option>
+                        <option value="₹">INR (₹)</option>
+                        <option value="¥">JPY (¥)</option>
+                        <option value="C$">CAD (C$)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="password" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="password" name="password" required minlength="6"
+                        placeholder="Min 6 chars"
+                        class="form-input-modern w-full text-sm">
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="btn-primary w-full py-3 text-sm shadow-md">
+                    Create Account
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
+            Already have an account? 
+            <a href="/login" class="font-semibold text-emerald-600 hover:text-emerald-700 ml-1">Sign in here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
